@@ -245,13 +245,13 @@ unstsingbox(){
 }
 
 startsingbox(){
-    systemctl start sing-box-server
-    systemctl enable sing-box-server >/dev/null 2>&1
+    systemctl start sing-box
+    systemctl enable sing-box >/dev/null 2>&1
 }
 
 stopsingbox(){
-    systemctl stop sing-box-server
-    systemctl disable sing-box-server >/dev/null 2>&1
+    systemctl stop sing-box
+    systemctl disable sing-box >/dev/null 2>&1
 }
 
 singboxswitch(){
