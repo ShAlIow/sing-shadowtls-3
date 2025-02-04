@@ -330,6 +330,7 @@ showconf(){
     # 提取配置参数
     local config_file="/etc/sing-box/config.json"
     local port=$(jq -r '.inbounds[0].listen_port' "$config_file")
+    local ss_port=$(jq -r '.inbounds[1].listen_port' "$config_file")
     local passwd=$(jq -r '.inbounds[0].users[0].password' "$config_file")
     local ss_pwd=$(jq -r '.inbounds[1].password' "$config_file")
     local proxysite=$(jq -r '.inbounds[0].handshake.server' "$config_file")
@@ -347,6 +348,7 @@ showconf(){
     echo ""
     echo "服务器地址: ${uri_ip}"
     echo "端口: ${port}"
+    echo "udp端口: ${ss_port}"
     echo "ShadowTLS 密码: ${passwd}"
     echo "Shadowsocks 密码: ${ss_pwd}"
     echo "加密方式: 2022-blake3-aes-128-gcm"
