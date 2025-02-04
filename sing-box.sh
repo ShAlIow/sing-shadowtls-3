@@ -369,7 +369,7 @@ showconf(){
 
     # 输出仿照第一个脚本的配置行
     green "配置参数："
-    echo "${uri_ip} = ss, ${uri_ip}, ${port}, encrypt-method=2022-blake3-aes-128-gcm, password=${ss_pwd}, shadow-tls-password=${passwd}, shadow-tls-sni=${proxysite}, shadow-tls-version=3, udp-relay=true"
+    echo "${uri_ip} = ss, ${uri_ip}, ${port}, encrypt-method=2022-blake3-aes-128-gcm, password=${ss_pwd}, shadow-tls-password=${passwd}, shadow-tls-sni=${proxysite}, shadow-tls-version=3, udp-port=${ss_port}, udp-relay=true"
     echo ""
 
     # 显示原client.json内容
