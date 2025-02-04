@@ -77,7 +77,7 @@ instsingbox(){
     if [[ ! ${SYSTEM} == "CentOS" ]]; then
         ${PACKAGE_UPDATE}
     fi
-    ${PACKAGE_INSTALL} wget curl sudo
+    ${PACKAGE_INSTALL} wget curl sudo jq
 
     last_version=$(curl -s https://data.jsdelivr.com/v1/package/gh/SagerNet/sing-box | sed -n 4p | tr -d ',"' | awk '{print $1}')
 
@@ -314,10 +314,53 @@ changeconf(){
 }
 
 showconf(){
+    # 提取配置参数
+    local config_file="/etc/sing-box/config.json"
+    local port=$(jq -r '.inbounds[0].listen_port' "$config_file")
+    local passwd=$(jq -r '.inbounds[0].users[0].password' "$config_file")
+    local ss_pwd=$(jq -r '.inbounds[1].password' "$config_file")
+    local proxysite=$(jq -r '.inbounds[0].handshake.server' "$config_file")
+    local ip=$(curl -s4m8 ip.sb -k || curl -s6m8 ip.sb -k)
+    
+    # 处理IPv6地址
+    if [[ "$ip" =~ : ]]; then
+        uri_ip="[${ip}]"
+    else
+        uri_ip="${ip}"
+    fi
+
+    # 生成ShadowTLS + SS配置信息
+    yellow "ShadowTLS + Shadowsocks 配置信息："
+    echo ""
+    echo "服务器地址: ${uri_ip}"
+    echo "端口: ${port}"
+    echo "ShadowTLS 密码: ${passwd}"
+    echo "Shadowsocks 密码: ${ss_pwd}"
+    echo "加密方式: 2022-blake3-aes-128-gcm"
+    echo "SNI: ${proxysite}"
+    echo "ShadowTLS 版本: 3"
+    echo "UDP 支持: 是"
+    echo ""
+
+    # 生成SS链接
+    local plugin_opts="shadow-tls;version=3;password=${passwd};sni=${proxysite}"
+    local plugin_opts_encoded=$(echo "$plugin_opts" | sed 's/;/%3B/g;s/=/%3D/g')
+    local userinfo_base64=$(echo -n "2022-blake3-aes-128-gcm:${ss_pwd}" | base64 -w 0)
+    local ss_uri="ss://${userinfo_base64}@${uri_ip}:${port}/?plugin=${plugin_opts_encoded}#ShadowTLS_SS_${uri_ip//:/_}"
+    
+    green "SS 链接："
+    echo "${ss_uri}"
+    echo ""
+
+    # 输出仿照第一个脚本的配置行
+    green "配置参数："
+    echo "${uri_ip} = ss, ${uri_ip}, ${port}, encrypt-method=2022-blake3-aes-128-gcm, password=${ss_pwd}, shadow-tls-password=${passwd}, shadow-tls-sni=${proxysite}, shadow-tls-version=3, udp-relay=true"
+    echo ""
+
+    # 显示原client.json内容
     yellow "客户端配置文件 client.json 内容如下，并保存到 /root/sing-box/client.json"
     red "$(cat /root/sing-box/client.json)"
 }
-
 menu() {
     clear
     echo "#############################################################"
