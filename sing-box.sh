@@ -271,7 +271,7 @@ singboxswitch(){
 }
 
 changeport(){
-    oldport=$(cat /etc/sing-box/config.json 2>/dev/null | sed -n 6p | awk '{print $2}' | tr -d ',' | awk -F ":" '{print $2}' | tr -d '"')
+    oldport=$(jq -r '.inbounds[0].listen_port' /etc/sing-box/config.json)
     
     read -p "设置 Sing-box 端口 [1-65535]（回车则随机分配端口）：" port
     [[ -z $port ]] && port=$(shuf -i 2000-65535 -n 1)
