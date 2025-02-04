@@ -167,10 +167,18 @@ EOF
       "method": "2022-blake3-aes-128-gcm",
       "password": "$ss_pwd",
       "detour": "shadowtls-out",
+      "udp_over_tcp": true,
       "multiplex": {
         "enabled": true,
-        "max_connections": 4,
-        "min_streams": 4
+        "protocol": "h2mux",
+        "max_connections": 8,
+        "min_streams": 16,
+        "padding": true,
+        "brutal": {
+          "enabled": false,
+          "up_mbps": 1000,
+          "down_mbps": 1000
+        }
       }
     },
     {
@@ -183,6 +191,10 @@ EOF
       "tls": {
         "enabled": true,
         "server_name": "$proxysite"
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        }          
       }
     },
     {
