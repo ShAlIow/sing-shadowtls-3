@@ -117,7 +117,7 @@ instsingbox(){
     {
       "type": "shadowtls",
       "listen": "::",
-      "listen_port": $port,
+      "listen_port": 443,
       "version": 3,
       "users": [
         {
@@ -134,7 +134,8 @@ instsingbox(){
     {
       "type": "shadowsocks",
       "tag": "shadowsocks-in",
-      "listen": "127.0.0.1",
+      "listen": "::",
+      "listen_port": "$port",
       "network": "tcp",
       "method": "2022-blake3-aes-128-gcm",
       "password": "$ss_pwd"
@@ -167,7 +168,7 @@ EOF
       "method": "2022-blake3-aes-128-gcm",
       "password": "$ss_pwd",
       "detour": "shadowtls-out",
-      "udp_over_tcp": true,
+      "udp_over_tcp": false,
       "multiplex": {
         "enabled": true,
         "protocol": "h2mux",
@@ -185,7 +186,7 @@ EOF
       "type": "shadowtls",
       "tag": "shadowtls-out",
       "server": "$last_ip",
-      "server_port": $port,
+      "server_port": 443,
       "version": 3,
       "password": "$passwd",
       "tls": {
@@ -271,7 +272,7 @@ singboxswitch(){
 }
 
 changeport(){
-    oldport=$(jq -r '.inbounds[0].listen_port' /etc/sing-box/config.json)
+    oldport=$(jq -r '.inbounds[1].listen_port' /etc/sing-box/config.json)
     
     read -p "设置 Sing-box 端口 [1-65535]（回车则随机分配端口）：" port
     [[ -z $port ]] && port=$(shuf -i 2000-65535 -n 1)
@@ -284,8 +285,8 @@ changeport(){
     done
     yellow "使用在 Sing-box 节点的端口为：$port"
 
-    sed -i "6s#$oldport#$port#g" /etc/sing-box/config.json
-    sed -i "34s#$oldport#$port#g" /root/sing-box/client.json
+    sed -i "24s#$oldport#$port#g" /etc/sing-box/config.json
+   # sed -i "34s#$oldport#$port#g" /root/sing-box/client.json
 
     stopsingbox && startsingbox
 
