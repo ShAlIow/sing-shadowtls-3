@@ -136,7 +136,6 @@ instsingbox(){
       "tag": "shadowsocks-in",
       "listen": "::",
       "listen_port": $port,
-      "network": "tcp",
       "method": "2022-blake3-aes-128-gcm",
       "password": "$ss_pwd"
     }
