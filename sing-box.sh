@@ -285,7 +285,7 @@ changeport(){
     yellow "使用在 Sing-box 节点的端口为：$port"
 
     sed -i "6s#$oldport#$port#g" /etc/sing-box/config.json
-    sed -i "26s#$oldport#$port#g" /root/sing-box/client.json
+    sed -i "34s#$oldport#$port#g" /root/sing-box/client.json
 
     stopsingbox && startsingbox
 
@@ -301,7 +301,7 @@ changepasswd(){
     ss_pwd=$(sing-box generate rand --base64 16)
 
     sed -i "11s#$oldpasswd#$passwd#g" /etc/sing-box/config.json
-    sed -i "28s#$oldpasswd#$passwd#g" /root/sing-box/client.json
+    sed -i "36s#$oldpasswd#$passwd#g" /root/sing-box/client.json
     sed -i "26s#$oldss_pwd#$ss_pwd#g" /etc/sing-box/config.json
     sed -i "14s#$oldss_pwd#$ss_pwd#g" /root/sing-box/client.json
 
